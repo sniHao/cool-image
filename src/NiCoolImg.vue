@@ -18,9 +18,9 @@
             <div class="cool-go-operate">
                 <template v-if="isShow2D">
                     <ul class="cool-ul">
-                        <li>&nbsp;鼠标左键按住滑动3D浏览图片 😎</li>
-                        <li>&nbsp;鼠标滚轮放大|缩小图片 🙈</li>
-                        <li>&nbsp;滚轮右键按住可拖动图片 🤲</li>
+                        <li>鼠标左键按住滑动3D浏览图片 😎</li>
+                        <li>鼠标滚轮放大|缩小图片 🙈</li>
+                        <li>滚轮右键按住可拖动图片 🤲</li>
                     </ul>
                 </template>
                 <template v-else>
@@ -44,7 +44,6 @@
                 <el-switch v-model="isShow2D" active-color="#13ce66" inactive-color="#409eff"></el-switch>
                 <span class="ft-b" :class="isShow2D ? 'choose23D' : 'notChoose23D'">3D</span>
             </div>
-
         </div>
         <!-- 模式展示 -->
         <div class="cool-show-canvas" id="cool-show-canvas">
@@ -59,7 +58,8 @@ import { defineProps, onMounted, reactive, ref } from 'vue';
 const prop = defineProps({
     width: Number,
     height: Number,
-    bgColor: String
+    bgColor: String,
+    coolUrl: String
 })
 
 interface imgInfoIter {
@@ -275,7 +275,7 @@ const rotateImg = (cod: string) => {
 }
 
 onMounted(() => {
-    drawCanvas("https://foruda.gitee.com/avatar/1688443323004861875/10029544_xphao_6_1688443322.png")
+    drawCanvas(prop.coolUrl as string)
 })
 </script>
   
@@ -298,6 +298,7 @@ onMounted(() => {
     min-width: 600px;
     min-height: 350px;
     background-color: bisque;
+    display: flex;
 }
 
 .cool-operate {
@@ -310,6 +311,10 @@ onMounted(() => {
     box-sizing: border-box;
 }
 
+.cool-show-canvas{
+    width: 80%;
+    height: 100%;
+}
 .cool-tips {
     position: relative;
     cursor: pointer;
@@ -370,13 +375,14 @@ onMounted(() => {
 
 .cool-ul li::marker {
     font-size: 10px;
-    content: "👨‍🚀";
+    content: "💖";
 }
 
 .cool-ul>li {
     font-size: 13px;
     margin-top: 14px;
     color: #7060ca;
+    padding-left: 6px;
 }
 </style>
   
