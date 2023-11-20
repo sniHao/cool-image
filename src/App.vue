@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import NiCoolImg from "./NiCoolImg.vue"
+import NiCoolImg from "@/pages/NiCoolImg.vue"
 
 </script>
 

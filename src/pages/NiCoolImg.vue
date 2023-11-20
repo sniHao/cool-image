@@ -48,13 +48,15 @@
         </div>
         <!-- 模式展示 -->
         <div class="cool-show-canvas" id="cool-show-canvas">
+            <ThreeIndex></ThreeIndex>
             <span v-if="notImgtips" class="cool-noImg-text" :style="`line-height:` + saveProp.height + `px`">暂无图模型</span>
         </div>
     </div>
 </template>
   
 <script lang="ts" setup>
-import { defineProps, onMounted, reactive, ref } from 'vue';
+import { defineProps, onMounted, reactive, ref, watchEffect } from 'vue';
+import ThreeIndex from './ThreeIndex.vue'
 const prop = defineProps({
     width: {
         type: Number,
@@ -152,7 +154,6 @@ const drawCanvas = (url: string) => {
         height = 400;
         width *= heightPro;
     }
-    let canvasDom = document.getElementById("cool-show-canvas");
     let newImg = document.createElement('img');
     newImg.setAttribute("class", "show_img");
     newImg.setAttribute("onerror", "style='display:none'");
@@ -166,8 +167,8 @@ const drawCanvas = (url: string) => {
     newImg.addEventListener("mousemove", drag);
     newImg.addEventListener("dblclick", stopDrag);
     imgInfo.liveDom = newImg;
-    if (canvasDom === null) return;
-    canvasDom.appendChild(newImg);
+    if (canvasBg.value === null) return;
+    canvasBg.value.appendChild(newImg);
     firstCreImg(newImg);
 }
 //点击开始移动
@@ -177,20 +178,19 @@ const startDrag = () => {
 };
 
 //移动中
-const drag = (event: MouseEvent) => {
+const drag: any = (event: MouseEvent) => {
     if (move.value) {
         let dom = event.target as HTMLElement;
-        let canvas = document.getElementById("cool-show-canvas");
-        if (canvas === null) return;
+        if (canvasBg.value === null) return;
         let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
         let scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
-        dom.style.left = event.clientX - canvas.getBoundingClientRect().left + (canvas.getBoundingClientRect().left - 150) + 24 + scrollLeft + 'px';
+        dom.style.left = event.clientX - canvasBg.value.getBoundingClientRect().left + (canvasBg.value.getBoundingClientRect().left - 150) + 24 + scrollLeft + 'px';
         dom.style.top = event.clientY - dom.offsetHeight / 2 + scrollTop + 'px';
     }
 };
 
 //停止移动
-const stopDrag = (event: MouseEvent) => {
+const stopDrag: any = (event: MouseEvent) => {
     ovPosition(event);
     imgInfo.liveDom = event.target;
     move.value = false;
@@ -218,12 +218,11 @@ const ovPosition = (event: MouseEvent) => {
 
 //获取画布数据
 const getCanvasInfo = () => {
-    let canvasDom = document.getElementById("cool-show-canvas") as HTMLElement;
     let canvasInfo = {
-        canvasTop: canvasDom.offsetTop,
-        canvasLeft: canvasDom.offsetLeft,
-        canvasWidth: canvasDom.offsetWidth,
-        canvasHeight: canvasDom.offsetHeight
+        canvasTop: canvasBg.value.offsetTop,
+        canvasLeft: canvasBg.value.offsetLeft,
+        canvasWidth: canvasBg.value.offsetWidth,
+        canvasHeight: canvasBg.value.offsetHeight
     };
     return canvasInfo;
 }
@@ -241,10 +240,9 @@ const upImgSize = (cz: string) => {
     let oldHeight = imgInfo.liveDom.offsetHeight;
     let addWidth = oldWidth * imgInfo.addNum;
     let addHeight = oldHeight * imgInfo.addNum;
-    let canvasSize = document.getElementById("cool-show-canvas");
-    if (canvasSize == null) return;
-    let maxWidth = canvasSize.offsetWidth - 50;
-    let maxHeight = canvasSize.offsetHeight - 30;
+    if (canvasBg.value == null) return;
+    let maxWidth = canvasBg.value.offsetWidth - 50;
+    let maxHeight = canvasBg.value.offsetHeight - 30;
     if (addWidth > maxWidth && cz == "add") {
         if (imgInfo.upImgSizeMax) {
             imgInfo.liveDom.style.width = maxWidth + "px";
@@ -298,9 +296,27 @@ const diffIndex = () => {
     }
 }
 
+//监听2、3D切换 移除2D监听
+watchEffect(() => {
+    let imgDom = document.getElementsByClassName("show_img")[0]
+    if (isShow2D.value) {
+        if (imgDom === undefined) return;
+        imgDom.removeEventListener("click", startDrag);
+        imgDom.removeEventListener("mousemove", drag);
+        imgDom.removeEventListener("dblclick", stopDrag);
+        return;
+    }
+    if (imgDom === undefined) return;
+    imgDom.addEventListener("click", startDrag);
+    imgDom.addEventListener("mousemove", drag);
+    imgDom.addEventListener("dblclick", stopDrag);
+})
+
+let canvasBg = ref()
 onMounted(() => {
     if (diffIndex()) return;
     initImg(saveProp.coolUrl as string)
+    canvasBg.value = document.getElementById("cool-show-canvas")
 })
 </script>
   
