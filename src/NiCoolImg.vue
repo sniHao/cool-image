@@ -1,5 +1,6 @@
 <template>
-    <div class="cool-img-bd" :style="`width:` + prop.width + `px;height:` + prop.height + `px`">
+    <div class="cool-img-bd"
+        :style="`width:` + saveProp.width + `px;height:` + saveProp.height + `px;background-color: ` + saveProp.bgColor">
         <div class="cool-operate">
             <div class="flex-center-zy">
                 <div class="tips-height ft-b">操作区</div>
@@ -47,19 +48,37 @@
         </div>
         <!-- 模式展示 -->
         <div class="cool-show-canvas" id="cool-show-canvas">
-            <span v-if="notImgtips" style="font-size: 34px;line-height: 680px;color: #c27a03;">暂无图模型</span>
+            <span v-if="notImgtips" class="cool-noImg-text" :style="`line-height:` + saveProp.height + `px`">暂无图模型</span>
         </div>
     </div>
 </template>
   
 <script lang="ts" setup>
 import { defineProps, onMounted, reactive, ref } from 'vue';
-
 const prop = defineProps({
-    width: Number,
-    height: Number,
-    bgColor: String,
-    coolUrl: String
+    width: {
+        type: Number,
+        default: 600
+    },
+    height: {
+        type: Number,
+        default: 350
+    },
+    bgColor: {
+        type: String,
+        default: '#e9e9e9'
+    },
+    coolUrl: {
+        type: String,
+        default: ''
+    }
+})
+
+let saveProp = reactive({
+    width: 600,
+    height: 350,
+    bgColor: 'bisque',
+    coolUrl: ""
 })
 
 interface imgInfoIter {
@@ -73,6 +92,7 @@ interface imgInfoIter {
     realAngleX: number,
     realAngleY: number
 }
+
 let tipsText = ref("图形出现大小默认是原图片大小,超出或小于限制将变为限制大小\nTips🎉：图片可为透明png\n\n2D: \n单击图形开始移动 🚀\n" +
     "双击图形结束移动 😪\n放大和缩小都有限制 🤪\n\n 3D:\n鼠标左键按住滑动3D浏览图片 😎\n鼠标滚轮放大/缩小图片 🙈\n滚轮右键按住可拖动图片 🤲")
 
@@ -93,7 +113,6 @@ let imgInfo: imgInfoIter = reactive({
 
 //获取图片数据
 const getImageSize = (url: string) => {
-    console.log('获取图片数据');
     return new Promise((resolve, reject) => {
         let image = new Image();
         image.onload = () => {
@@ -110,89 +129,90 @@ const getImageSize = (url: string) => {
     });
 }
 
-//创建图形
-const drawCanvas = (url: string) => {
-    //获取图片大小
+//初始化图形
+const initImg = (url: string) => {
     getImageSize(url).then((result: any) => {
         notImgtips.value = result === "no_img" ? true : false;
         imgInfo.imgHeight = result.height;
         imgInfo.imgWidth = result.width;
+        if (imgInfo.imgHeight != null) drawCanvas(url)
     });
-    //创建图形
-    setTimeout(() => {
-        if (imgInfo?.liveDom != "") document.getElementsByClassName('show_img_')[0]?.remove();
-        let widthPro = 500 / imgInfo.imgWidth;
-        let heightPro = 400 / imgInfo.imgHeight;
-        let width = imgInfo.imgWidth, height = imgInfo.imgHeight;
-        if (width > 500) {
-            width = 500;
-            height *= widthPro;
-        } else if (height > 400) {
-            height = 400;
-            width *= heightPro;
-        }
-        let canvasDom = document.getElementById("cool-show-canvas");
-        let newImg = document.createElement('img');
-        newImg.setAttribute("class", "show_img_");
-        newImg.setAttribute("onerror", "style='display:none'");
-        newImg.src = url;
-        newImg.style.position = "absolute";
-        newImg.style.width = width + "px";
-        newImg.style.height = height + "px";
-        imgInfo.width = width + "px";
-        imgInfo.height = height + "px";
-        newImg.addEventListener("click", startDrag);
-        newImg.addEventListener("mousemove", drag);
-        newImg.addEventListener("dblclick", stopDrag);
-        imgInfo.liveDom = newImg;
-        if (canvasDom === null) return;
-        canvasDom.appendChild(newImg);
-        firstCreImg(newImg);
-    }, 500);
-
-    //点击开始移动
-    let move = false;
-    let startDrag = () => {
-        move = true;
-    };
-
-    //移动中
-    let drag = (event: MouseEvent) => {
-        if (move) {
-            let dom = event.target as HTMLElement;
-            let canvas = document.getElementById("cool-show-canvas");
-            if (canvas === null) return;
-            dom.style.left = event.clientX - canvas.getBoundingClientRect().left - (dom.offsetWidth - 300) / 2 + 'px';
-            dom.style.top = event.clientY - canvas.getBoundingClientRect().top - dom.offsetHeight / 2 + 16 + 'px';
-        }
-    };
-
-    //停止移动
-    let stopDrag = (event: MouseEvent) => {
-        ovPosition(event);
-        imgInfo.liveDom = event.target;
-        move = false;
-    };
-
-    let firstCreImg = (dom: HTMLElement) => {
-        upImgPositionCom(dom.offsetWidth, dom.offsetHeight);
-    };
-
-    //是否超出画布
-    let ovPosition = (event: MouseEvent) => {
-        let evTarget = event.target as HTMLElement;
-        let imgWidth = evTarget.offsetWidth;
-        let imgHeight = evTarget.offsetHeight;
-        let canvasInfo = getCanvasInfo();
-        let imgLeft = parseInt(evTarget.style.left.replace("px", ""));
-        let imgTop = parseInt(evTarget.style.top.replace("px", ""));
-        if (imgLeft - canvasInfo.canvasLeft < 1 || imgWidth + imgLeft - canvasInfo.canvasLeft - canvasInfo.canvasWidth > -3 ||
-            imgTop - canvasInfo.canvasTop < 1 || imgHeight + imgTop - canvasInfo.canvasTop - canvasInfo.canvasHeight > -3) {
-            evTarget.style.left = canvasInfo.canvasLeft + canvasInfo.canvasWidth / 2 - imgWidth / 2 + 'px';
-            evTarget.style.top = canvasInfo.canvasTop + canvasInfo.canvasHeight / 2 - imgHeight / 2 + 'px';
-        }
-    };
 }
+
+//创建图形
+const drawCanvas = (url: string) => {
+    if (imgInfo?.liveDom != "") document.getElementsByClassName('show_img')[0]?.remove();
+    let widthPro = 500 / imgInfo.imgWidth;
+    let heightPro = 400 / imgInfo.imgHeight;
+    let width = imgInfo.imgWidth, height = imgInfo.imgHeight;
+    if (width > 500) {
+        width = 500;
+        height *= widthPro;
+    } else if (height > 400) {
+        height = 400;
+        width *= heightPro;
+    }
+    let canvasDom = document.getElementById("cool-show-canvas");
+    let newImg = document.createElement('img');
+    newImg.setAttribute("class", "show_img");
+    newImg.setAttribute("onerror", "style='display:none'");
+    newImg.src = url;
+    newImg.style.position = "absolute";
+    newImg.style.width = width + "px";
+    newImg.style.height = height + "px";
+    imgInfo.width = width + "px";
+    imgInfo.height = height + "px";
+    newImg.addEventListener("click", startDrag);
+    newImg.addEventListener("mousemove", drag);
+    newImg.addEventListener("dblclick", stopDrag);
+    imgInfo.liveDom = newImg;
+    if (canvasDom === null) return;
+    canvasDom.appendChild(newImg);
+    firstCreImg(newImg);
+}
+//点击开始移动
+let move = ref(false)
+const startDrag = () => {
+    move.value = true;
+};
+
+//移动中
+const drag = (event: MouseEvent) => {
+    if (move.value) {
+        let dom = event.target as HTMLElement;
+        let canvas = document.getElementById("cool-show-canvas");
+        if (canvas === null) return;
+        dom.style.left = event.clientX - canvas.getBoundingClientRect().left - (dom.offsetWidth - 300) / 2 + 'px';
+        dom.style.top = event.clientY - canvas.getBoundingClientRect().top - dom.offsetHeight / 2 + 16 + 'px';
+    }
+};
+
+//停止移动
+const stopDrag = (event: MouseEvent) => {
+    ovPosition(event);
+    imgInfo.liveDom = event.target;
+    move.value = false;
+};
+
+//首次创建图形
+const firstCreImg = (dom: HTMLElement) => {
+    upImgPositionCom(dom.offsetWidth, dom.offsetHeight);
+};
+
+//是否超出画布
+const ovPosition = (event: MouseEvent) => {
+    let evTarget = event.target as HTMLElement;
+    let imgWidth = evTarget.offsetWidth;
+    let imgHeight = evTarget.offsetHeight;
+    let canvasInfo = getCanvasInfo();
+    let imgLeft = parseInt(evTarget.style.left.replace("px", ""));
+    let imgTop = parseInt(evTarget.style.top.replace("px", ""));
+    if (imgLeft - canvasInfo.canvasLeft < 1 || imgWidth + imgLeft - canvasInfo.canvasLeft - canvasInfo.canvasWidth > -3 ||
+        imgTop - canvasInfo.canvasTop < 1 || imgHeight + imgTop - canvasInfo.canvasTop - canvasInfo.canvasHeight > -3) {
+        evTarget.style.left = canvasInfo.canvasLeft + canvasInfo.canvasWidth / 2 - imgWidth / 2 + 'px';
+        evTarget.style.top = canvasInfo.canvasTop + canvasInfo.canvasHeight / 2 - imgHeight / 2 + 'px';
+    }
+};
 
 //获取画布数据
 const getCanvasInfo = () => {
@@ -205,6 +225,7 @@ const getCanvasInfo = () => {
     };
     return canvasInfo;
 }
+
 //图形居中公共方法
 const upImgPositionCom = (imgWidth: number, imgHeight: number) => {
     let canvasInfo = getCanvasInfo();
@@ -245,12 +266,14 @@ const upImgSize = (cz: string) => {
     }
     upImgPosition();
 }
+
 //图形居中
 const upImgPosition = () => {
     let imgWidth = imgInfo.liveDom.offsetWidth;
     let imgHeight = imgInfo.liveDom.offsetHeight;
     upImgPositionCom(imgWidth, imgHeight);
 }
+
 //还原图形
 const reductionImg = () => {
     imgInfo.liveDom.style.width = imgInfo.width;
@@ -260,22 +283,22 @@ const reductionImg = () => {
     imgInfo.realAngleY = 0;
     upImgPosition();
 }
-//旋转角度
-const rotateImg = (cod: string) => {
-    let transformNum = imgInfo.liveDom.style.transform.split(" ");
-    let str = "rotate" + cod;
-    let rotate = "";
-    transformNum.forEach((item: string) => {
-        if (item.indexOf(str) != -1) rotate = item;
-    });
-    let rq = cod == "X" ? "Y" : "X";
-    let deg = cod == "X" ? imgInfo.realAngleY : imgInfo.realAngleX;
-    let result = "rotate" + rq;
-    imgInfo.liveDom.style.transform = result + `(${deg}deg)` + rotate;
+
+//修正数据
+const diffIndex = () => {
+    if (prop.height > 350) saveProp.height = prop.height
+    if (prop.width > 600) saveProp.width = prop.width
+    saveProp.bgColor = prop.bgColor
+    saveProp.coolUrl = prop.coolUrl
+    if (prop.coolUrl === "") {
+        notImgtips.value = true
+        return true;
+    }
 }
 
 onMounted(() => {
-    drawCanvas(prop.coolUrl as string)
+    if (diffIndex()) return;
+    initImg(saveProp.coolUrl as string)
 })
 </script>
   
@@ -293,11 +316,8 @@ onMounted(() => {
 }
 
 .cool-img-bd {
-    width: 800px;
-    height: 600px;
     min-width: 600px;
     min-height: 350px;
-    background-color: bisque;
     display: flex;
 }
 
@@ -311,10 +331,11 @@ onMounted(() => {
     box-sizing: border-box;
 }
 
-.cool-show-canvas{
+.cool-show-canvas {
     width: 80%;
     height: 100%;
 }
+
 .cool-tips {
     position: relative;
     cursor: pointer;
@@ -383,6 +404,13 @@ onMounted(() => {
     margin-top: 14px;
     color: #7060ca;
     padding-left: 6px;
+}
+
+.cool-noImg-text {
+    display: block;
+    text-align: center;
+    font-size: 34px;
+    color: #c27a03;
 }
 </style>
   
