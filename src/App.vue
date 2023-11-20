@@ -1,6 +1,6 @@
 <template>
-  <NiCoolImg :coolUrl="`https://foruda.gitee.com/avatar/1688443323004861875/10029544_xphao_6_1688443322.png`">
-
+  <NiCoolImg :width="6" :height="90"
+    :coolUrl="`https://foruda.gitee.com/avatar/1688443323004861875/10029544_xphao_6_1688443322.png`">
   </NiCoolImg>
 </template>
 
@@ -9,4 +9,8 @@ import NiCoolImg from "./NiCoolImg.vue"
 
 </script>
 
-<style></style>
+<style>
+body {
+  margin: 0;
+}
+</style>

@@ -182,8 +182,10 @@ const drag = (event: MouseEvent) => {
         let dom = event.target as HTMLElement;
         let canvas = document.getElementById("cool-show-canvas");
         if (canvas === null) return;
-        dom.style.left = event.clientX - canvas.getBoundingClientRect().left - (dom.offsetWidth - 300) / 2 + 'px';
-        dom.style.top = event.clientY - canvas.getBoundingClientRect().top - dom.offsetHeight / 2 + 16 + 'px';
+        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        let scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+        dom.style.left = event.clientX - canvas.getBoundingClientRect().left + (canvas.getBoundingClientRect().left - 150) + 24 + scrollLeft + 'px';
+        dom.style.top = event.clientY - dom.offsetHeight / 2 + scrollTop + 'px';
     }
 };
 
@@ -218,8 +220,8 @@ const ovPosition = (event: MouseEvent) => {
 const getCanvasInfo = () => {
     let canvasDom = document.getElementById("cool-show-canvas") as HTMLElement;
     let canvasInfo = {
-        canvasTop: 15,
-        canvasLeft: 145,
+        canvasTop: canvasDom.offsetTop,
+        canvasLeft: canvasDom.offsetLeft,
         canvasWidth: canvasDom.offsetWidth,
         canvasHeight: canvasDom.offsetHeight
     };
@@ -287,7 +289,7 @@ const reductionImg = () => {
 //修正数据
 const diffIndex = () => {
     if (prop.height > 350) saveProp.height = prop.height
-    if (prop.width > 600) saveProp.width = prop.width
+    if (prop.width > 450) saveProp.width = prop.width + 150
     saveProp.bgColor = prop.bgColor
     saveProp.coolUrl = prop.coolUrl
     if (prop.coolUrl === "") {
@@ -322,7 +324,7 @@ onMounted(() => {
 }
 
 .cool-operate {
-    width: 20%;
+    width: 150px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -332,7 +334,7 @@ onMounted(() => {
 }
 
 .cool-show-canvas {
-    width: 80%;
+    width: calc(100% - 150px);
     height: 100%;
 }
 
