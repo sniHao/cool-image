@@ -21,6 +21,8 @@
 ```
 import CoolImage from 'cool-image'
 import 'cool-image/cool-image.css'
+
+app.use(CoolImage)
 ```
 - 组件中
 
