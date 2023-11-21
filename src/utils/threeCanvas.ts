@@ -6,11 +6,11 @@ export default function renderingCanvas(canvasDom: HTMLElement, url: string, bgC
         url = url + "?" + Date.parse(new Date().toString())
         const img = new Image();
         img.src = url
-        img.onload = (e) => {
+        img.onload = () => {
             const res = countSize(img.width, img.height, true)
             drawImg(res[0], res[1])
         }
-
+        
         //重置渲染图片大小
         const countSize = (imgWidth: number, imgHeight: number, loop: boolean): Array<number> => {
             const res = [imgWidth, imgHeight]
@@ -63,19 +63,17 @@ export default function renderingCanvas(canvasDom: HTMLElement, url: string, bgC
             canvasDom.appendChild(renderer.domElement);
             const geometry = new THREE.PlaneGeometry(imgWidth, imgHeight);
             const loader = new THREE.TextureLoader();
-            const material = new THREE.MeshLambertMaterial({
+            const material = new THREE.MeshBasicMaterial({
                 map: loader.load(url, render),
                 side: THREE.DoubleSide,
-                transparent: true,
-                color: 0xffffff
+                transparent: true
             });
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.set(0, 0, 0);
             mesh.scale.set(0.3, 0.3, 0.3)
             scene.add(mesh);
-            const light = new THREE.DirectionalLight(0xffffff);
-            light.position.set(0, 0, 1);
-            scene.add(light);
+            const ambient = new THREE.AmbientLight(0xffffff)
+            scene.add(ambient);
             const controls = new OrbitControls(camera, renderer.domElement) as any;
             controls.addEventListener('change', render);
             controls.minZoom = 0.5;

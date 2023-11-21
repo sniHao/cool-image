@@ -41,11 +41,11 @@
             </div>
             <!-- 2_3维切换-->
             <div class="flex-center-zy">
-                <span class="ft-b" :class="!isShow2D ? 'choose23D' : 'notChoose23D'">2D</span>
+                <span class="ft-b cz-font" :class="!isShow2D ? 'is-avtive' : ''">2D</span>
                 <el-switch v-if="canShowThree" v-model="isShow2D" active-color="#13ce66"
                     inactive-color="#409eff"></el-switch>
                 <el-switch v-else active-color="#13ce66" inactive-color="#409eff" disabled></el-switch>
-                <span class="ft-b" :class="isShow2D ? 'choose23D' : 'notChoose23D'">3D</span>
+                <span class="ft-b cz-font" :class="isShow2D ? 'is-avtive' : ''">3D</span>
             </div>
         </div>
         <!-- 模式展示 -->
@@ -67,6 +67,8 @@
 <script lang="ts" setup>
 import { defineProps, onMounted, reactive, ref, watchEffect } from 'vue';
 import renderingCanvas from '@/utils/threeCanvas'
+import { ElButton, ElSwitch } from 'element-plus'
+import 'element-plus/dist/index.css'
 
 const prop = defineProps({
     width: {
@@ -462,6 +464,15 @@ onMounted(() => {
     text-align: center;
     font-size: 34px;
     color: #c27a03;
+}
+
+.cz-font {
+    color: #545454;
+}
+
+.is-avtive {
+    color: rgb(41, 20, 20);
+    font-size: 20px;
 }
 </style>
   
