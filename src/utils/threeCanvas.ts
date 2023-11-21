@@ -6,12 +6,11 @@ export default function renderingCanvas(canvasDom: HTMLElement, url: string, bgC
         url = url + "?" + Date.parse(new Date().toString())
         const img = new Image();
         img.src = url
-        let imgWidth: number, imgHeight: number
-        img.onload = () => {
+        img.onload = (e) => {
             const res = countSize(img.width, img.height, true)
-            imgWidth = res[0]
-            imgHeight = res[1]
+            drawImg(res[0], res[1])
         }
+
         //重置渲染图片大小
         const countSize = (imgWidth: number, imgHeight: number, loop: boolean): Array<number> => {
             const res = [imgWidth, imgHeight]
@@ -53,11 +52,11 @@ export default function renderingCanvas(canvasDom: HTMLElement, url: string, bgC
         }
 
         //绘制图形
-        setTimeout(() => {
+        const drawImg = (imgWidth: number, imgHeight: number) => {
             imgWidth = imgWidth === undefined ? 15 : imgWidth
             imgHeight = imgHeight === undefined ? 12 : imgHeight
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            const camera = new THREE.PerspectiveCamera(60, canvasDom.offsetWidth / canvasDom.offsetHeight, 1, 1000);
             camera.position.z = 10;
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(canvasDom.offsetWidth, canvasDom.offsetHeight);
@@ -90,7 +89,7 @@ export default function renderingCanvas(canvasDom: HTMLElement, url: string, bgC
                 renderer.render(scene, camera);
             }
             resolve(true)
-        }, 200)
+        }
     })
 
 }
