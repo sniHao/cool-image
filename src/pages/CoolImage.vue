@@ -1,5 +1,5 @@
 <template>
-    <div class="cool-img-bd"
+    <div class="cool-image-bd"
         :style="`width:` + saveProp.width + `px;height:` + saveProp.height + `px;background-color: ` + saveProp.bgColor">
         <div class="cool-operate">
             <div class="flex-center-zy">
@@ -356,7 +356,7 @@ onMounted(() => {
     justify-content: space-between;
 }
 
-.cool-img-bd {
+.cool-image-bd {
     min-width: 600px;
     min-height: 350px;
     display: flex;

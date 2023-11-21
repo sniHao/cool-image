@@ -1,11 +1,11 @@
 <template>
-  <NiCoolImg :width="1300" :height="690"
+  <CoolImage :width="1300" :height="690"
     :coolUrl="`https://foruda.gitee.com/avatar/1688443323004861875/10029544_xphao_6_1688443322.png`">
-  </NiCoolImg>
+  </CoolImage>
 </template>
 
 <script lang="ts" setup>
-import NiCoolImg from "@/pages/NiCoolImg.vue"
+import CoolImage from "@/pages/CoolImage.vue"
 
 </script>
 

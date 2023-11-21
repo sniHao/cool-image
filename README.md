@@ -15,7 +15,7 @@
 #### 使用说明🍋
 
 ```
-<NiCoolImg :width="1300" :height="690" :coolUrl="xxx" :bgColor="xxx"></NiCoolImg>
+<CoolImage :width="1300" :height="690" :coolUrl="xxx" :bgColor="xxx"></CoolImage>
 ```
 > 属性说明：
 - width:画布的宽【不包含左部分操作区(150px)】  |  类型:number  |  默认：450px    
