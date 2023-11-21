@@ -14,6 +14,16 @@
 
 #### 使用说明🍋
 
+> 在Vue中全局引入，即可在其他组件中直接使用
+
+- main.ts中
+
+```
+import CoolImage from 'cool-image'
+import 'cool-image/cool-image.css'
+```
+- 组件中
+
 ```
 <CoolImage :width="1300" :height="690" :coolUrl="xxx" :bgColor="xxx"></CoolImage>
 ```
