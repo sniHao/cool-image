@@ -42,21 +42,32 @@
             <!-- 2_3维切换-->
             <div class="flex-center-zy">
                 <span class="ft-b" :class="!isShow2D ? 'choose23D' : 'notChoose23D'">2D</span>
-                <el-switch v-model="isShow2D" active-color="#13ce66" inactive-color="#409eff"></el-switch>
+                <el-switch v-if="canShowThree" v-model="isShow2D" active-color="#13ce66"
+                    inactive-color="#409eff"></el-switch>
+                <el-switch v-else active-color="#13ce66" inactive-color="#409eff" disabled></el-switch>
                 <span class="ft-b" :class="isShow2D ? 'choose23D' : 'notChoose23D'">3D</span>
             </div>
         </div>
         <!-- 模式展示 -->
-        <div class="cool-show-canvas" id="cool-show-canvas">
-            <ThreeIndex></ThreeIndex>
-            <span v-if="notImgtips" class="cool-noImg-text" :style="`line-height:` + saveProp.height + `px`">暂无图模型</span>
+        <div class="cool-show-body">
+            <div class="cool-show-two" id="cool-show-two" v-show="!isShow2D">
+                <span v-if="notImgtips" class="cool-noImg-text"
+                    :style="`line-height:` + saveProp.height + `px`">图片加载失败</span>
+            </div>
+            <div id="cool-show-three" v-show="isShow2D">
+                <span v-if="lodingThree" class="cool-noImg-text"
+                    :style="`line-height:` + saveProp.height + `px`">模型加载中...</span>
+            </div>
+
         </div>
+
     </div>
 </template>
   
 <script lang="ts" setup>
 import { defineProps, onMounted, reactive, ref, watchEffect } from 'vue';
-import ThreeIndex from './ThreeIndex.vue'
+import renderingCanvas from '@/utils/threeCanvas'
+
 const prop = defineProps({
     width: {
         type: Number,
@@ -124,6 +135,7 @@ const getImageSize = (url: string) => {
             });
         };
         image.onerror = () => {
+            canShowThree.value = false
             resolve("no_img");
             reject(new Error('error'));
         };
@@ -169,6 +181,7 @@ const drawCanvas = (url: string) => {
     imgInfo.liveDom = newImg;
     if (canvasBg.value === null) return;
     canvasBg.value.appendChild(newImg);
+    canShowThree.value = true;
     firstCreImg(newImg);
 }
 //点击开始移动
@@ -296,16 +309,27 @@ const diffIndex = () => {
     }
 }
 
-//监听2、3D切换 移除2D监听
+let canShowThree = ref(true)
+let hasThree = ref(false)
+let lodingThree = ref(true)
+//监听2、3D切换 移除2D操作监听
 watchEffect(() => {
     let imgDom = document.getElementsByClassName("show_img")[0]
     if (isShow2D.value) {
-        if (imgDom === undefined) return;
+        if (imgDom === undefined) return canShowThree.value = false;
         imgDom.removeEventListener("click", startDrag);
         imgDom.removeEventListener("mousemove", drag);
         imgDom.removeEventListener("dblclick", stopDrag);
+        //创建3D
+        if (!hasThree.value) {
+            renderingCanvas(document.getElementById("cool-show-three") as HTMLElement, saveProp.coolUrl, saveProp.bgColor).then(res => {
+                if (res) hasThree.value = true
+                lodingThree.value = false
+            })
+        }
         return;
     }
+    canShowThree.value = true
     if (imgDom === undefined) return;
     imgDom.addEventListener("click", startDrag);
     imgDom.addEventListener("mousemove", drag);
@@ -316,7 +340,7 @@ let canvasBg = ref()
 onMounted(() => {
     if (diffIndex()) return;
     initImg(saveProp.coolUrl as string)
-    canvasBg.value = document.getElementById("cool-show-canvas")
+    canvasBg.value = document.getElementById("cool-show-two")
 })
 </script>
   
@@ -330,7 +354,6 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
 }
 
 .cool-img-bd {
@@ -349,8 +372,18 @@ onMounted(() => {
     box-sizing: border-box;
 }
 
-.cool-show-canvas {
+.cool-show-body {
     width: calc(100% - 150px);
+    height: 100%;
+}
+
+.cool-show-two {
+    width: 100%;
+    height: 100%;
+}
+
+#cool-show-three {
+    width: 100%;
     height: 100%;
 }
 
