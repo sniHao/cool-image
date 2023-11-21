@@ -1,19 +1,27 @@
-# 酷看图片
+# cool-image
 
 #### 介绍🤔
-将一张图片进行2维或3维的预览
+仅仅只需一张图片，可实现图片2D、3D操作的预览🤪
 
-#### 软件架构👨‍🚀
-
-机密
+#### 效果预览👨‍🚀
+2D:
+![输入图片说明](public/gitImgtwo.png)
+3D:
+![输入图片说明](public/gitImgthree.png)
 
 #### 安装教程🚀
-
-保密[npm i nh-cool-img]
+`npm i nh-cool-img`
 
 #### 使用说明🍋
 
-不说[vue引入就行啦]
+```
+<NiCoolImg :width="1300" :height="690" :coolUrl="xxx" :bgColor="xxx"></NiCoolImg>
+```
+> 属性说明：
+- width:画布的宽【不包含左部分操作区(150px)】  |  类型:number  |  默认：450px    
+- height:画布的高【不包含左部分操作区(150px)】  |  类型:number  |  默认：350px  
+- coolUrl:图片链接路径  |  类型:string|  默认：—  
+- bgColor:画布背景色  |  类型:string|  默认："#E9E9E9"  
 
 #### 参与贡献🤖
 
