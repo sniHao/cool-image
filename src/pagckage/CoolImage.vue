@@ -66,7 +66,7 @@
   
 <script lang="ts" setup>
 import { defineProps, onMounted, reactive, ref, watchEffect } from 'vue';
-import renderingCanvas from '@/utils/threeCanvas'
+import renderingCanvas from './threeCanvas'
 import { ElButton, ElSwitch } from 'element-plus'
 import 'element-plus/dist/index.css'
 
