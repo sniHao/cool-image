@@ -7,12 +7,24 @@
 2D:
 ![输入图片说明](public/gitImgtwo.png)
 3D:
-![输入图片说明](public/gitImgthree.png)
+![输入图片说明](public/gitImageThree.png.png)
 
 #### 安装教程🚀
 `npm i nh-cool-img`
 
 #### 使用说明🍋
+
+> 在Vue中全局引入，即可在其他组件中直接使用
+
+- main.ts中
+
+```
+import CoolImage from 'cool-image'
+import 'cool-image/cool-image.css'
+
+app.use(CoolImage)
+```
+- 组件中
 
 ```
 <CoolImage :width="1300" :height="690" :coolUrl="xxx" :bgColor="xxx"></CoolImage>
