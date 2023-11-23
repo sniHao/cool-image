@@ -10,7 +10,10 @@
 ![输入图片说明](public/gitImageThree.png.png)
 
 #### 安装教程🚀
-`npm i nh-cool-img`
+```
+npm i cool-image
+
+```
 
 #### 使用说明🍋
 
