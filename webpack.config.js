@@ -1,5 +1,5 @@
 const path = require('path');
- 
+//npx webpack --config webpack.config.js
 module.exports = {
   entry: ['./template/three-modu.js', './template/three-orbit.js','./template/cool-image'], // 入口文件列表
   output: {
