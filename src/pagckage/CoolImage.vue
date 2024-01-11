@@ -197,10 +197,10 @@ const drag: any = (event: MouseEvent) => {
     if (move.value) {
         let dom = event.target as HTMLElement;
         if (canvasBg.value === null) return;
-        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-        let scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
-        dom.style.left = event.clientX - canvasBg.value.getBoundingClientRect().left + (canvasBg.value.getBoundingClientRect().left - 150) + 24 + scrollLeft + 'px';
-        dom.style.top = event.clientY - dom.offsetHeight / 2 + scrollTop + 'px';
+        dom.style.left =
+          event.pageX - +dom.style.width.replace("px", "") / 2 + "px";
+        dom.style.top =
+          event.pageY - +dom.style.height.replace("px", "") / 2 + "px";
     }
 };
 
