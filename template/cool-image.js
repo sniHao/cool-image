@@ -113,6 +113,10 @@ let myComponent = Vue.extend({
         canvasBg: "",
       },
       move: false,
+      moveX: 0,
+      moveY: 0,
+      domX: 0,
+      domY: 0,
     };
   },
   mounted() {
@@ -215,17 +219,19 @@ let myComponent = Vue.extend({
       this.canShowThree = true;
       this.firstCreImg(newImg);
     },
-    startDrag() {
+    startDrag(e) {
+      this.moveX = e.clientX;
+      this.moveY = e.clientY;
+      this.domX = e.target.style.left.replace("px", "");
+      this.domY = e.target.style.top.replace("px", "");
       this.move = true;
     },
     drag(event) {
       if (this.move) {
         let dom = event.target;
         if (this.canvasBg === null) return;
-        dom.style.left =
-          event.pageX - +dom.style.width.replace("px", "") / 2 + "px";
-        dom.style.top =
-          event.pageY - +dom.style.height.replace("px", "") / 2 + "px";
+        dom.style.left = this.domX - (this.moveX - event.clientX) + "px";
+        dom.style.top = this.domY - (this.moveY - event.clientY) + "px";
       }
     },
     stopDrag(event) {
