@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@2.7.14/dist/vue.js"></script>
+
+    <script type="module" src="./dist/cool-image.js"></script>
+
+    <link rel="stylesheet" href="./template/cool-image.css" />
+    <!-- 引入样式 -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+    />
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>---</h1>
+      <nh-image
+        :width="900"
+        :cool-url="'https://foruda.gitee.com/avatar/1688443323004861875/10029544_xphao_6_1688443322.png'"
+      ></nh-image>
+    </div>
+
+    <script type="module">
+      let a = new Vue({
+        el: "#app",
+        data: {},
+        mounted() {},
+        methods: {},
+      });
+    </script>
+  </body>
+</html>
