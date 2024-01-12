@@ -33,8 +33,8 @@ app.use(CoolImage)
 <CoolImage :width="1300" :height="690" :coolUrl="xxx" :bgColor="xxx"></CoolImage>
 ```
 > 属性说明：
-- width:画布的宽【不包含左部分操作区(150px)】  |  类型:number  |  默认：450px    
-- height:画布的高【不包含左部分操作区(150px)】  |  类型:number  |  默认：350px  
+- width:画布的宽【不包含左部分操作区(150px),传值'auto'为100%】  |  类型:number or string  |  默认：450px    
+- height:画布的高【不包含左部分操作区(150px),传值'auto'为100%】  |  类型:number or string  |  默认：350px  
 - coolUrl:图片链接路径  |  类型:string|  默认：—  
 - bgColor:画布背景色  |  类型:string|  默认："#E9E9E9"  
 

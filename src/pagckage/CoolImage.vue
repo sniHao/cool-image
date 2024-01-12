@@ -1,6 +1,6 @@
 <template>
     <div class="cool-image-bd"
-        :style="`width:` + saveProp.width + `px;height:` + saveProp.height + `px;background-color: ` + saveProp.bgColor">
+        :style="`width:` + saveProp.width + `;height:` + saveProp.height + `;background-color: ` + saveProp.bgColor">
         <div class="cool-operate">
             <div class="flex-center-zy">
                 <div class="tips-height ft-b">操作区</div>
@@ -52,11 +52,11 @@
         <div class="cool-show-body">
             <div class="cool-show-two" id="cool-show-two" v-show="!isShow2D">
                 <span v-if="notImgtips" class="cool-noImg-text"
-                    :style="`line-height:` + saveProp.height + `px`">图片加载失败</span>
+                    :style="`line-height:` + saveProp.height + `;`">图片加载失败</span>
             </div>
             <div id="cool-show-three" v-show="isShow2D">
                 <span v-if="lodingThree" class="cool-noImg-text"
-                    :style="`line-height:` + saveProp.height + `px`">模型加载中...</span>
+                    :style="`line-height:` + saveProp.height + `;`">模型加载中...</span>
             </div>
 
         </div>
@@ -90,8 +90,8 @@ const prop = defineProps({
 })
 
 let saveProp = reactive({
-    width: 600,
-    height: 350,
+    width: '600px',
+    height: '350px',
     bgColor: 'bisque',
     coolUrl: ""
 })
@@ -188,7 +188,16 @@ const drawCanvas = (url: string) => {
 }
 //点击开始移动
 let move = ref(false)
-const startDrag = () => {
+let moveX = ref(0)
+let moveY = ref(0)
+let domX = ref(0)
+let domY = ref(0)
+const startDrag = (event:MouseEvent) => {
+    moveX.value = event.clientX;
+    moveY.value = event.clientY;
+    let dom = event.target as HTMLElement;
+    domX.value = dom.style.left.replace("px", "");
+    domY.value = dom.style.top.replace("px", "");
     move.value = true;
 };
 
@@ -197,10 +206,8 @@ const drag: any = (event: MouseEvent) => {
     if (move.value) {
         let dom = event.target as HTMLElement;
         if (canvasBg.value === null) return;
-        dom.style.left =
-          event.pageX - +dom.style.width.replace("px", "") / 2 + "px";
-        dom.style.top =
-          event.pageY - +dom.style.height.replace("px", "") / 2 + "px";
+        dom.style.left =domX.value - (moveX.value - event.clientX) + "px";
+        dom.style.top =domY.value - (moveY.value - event.clientY) + "px";
     }
 };
 
@@ -301,8 +308,10 @@ const reductionImg = () => {
 
 //修正数据
 const diffIndex = () => {
-    if (prop.height > 350) saveProp.height = prop.height
-    if (prop.width > 450) saveProp.width = prop.width + 150
+    if (prop.height == "auto") saveProp.height = "100%";
+    else if (prop.height > 350) saveProp.height = prop.height + "px";
+    if (prop.width == "auto") saveProp.width = "100%";
+    else if (prop.width > 450) saveProp.width = prop.width + 150 + "px";
     saveProp.bgColor = prop.bgColor
     saveProp.coolUrl = prop.coolUrl
     if (prop.coolUrl === "") {
