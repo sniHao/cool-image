@@ -3,7 +3,7 @@ import { OrbitControls } from "./three-orbit.js";
 
 let temp = `
 <div class="cool-image-bd"
-        :style="'width:' + saveProp.width + 'px;height:' + saveProp.height + 'px;background-color: ' + saveProp.bgColor">
+        :style="'width:' + saveProp.width + ';height:' + saveProp.height + ';background-color: ' + saveProp.bgColor">
         <div class="cool-operate">
             <div class="flex-center-zy">
                 <div class="tips-height ft-b">操作区</div>
@@ -55,11 +55,11 @@ let temp = `
         <div class="cool-show-body">
             <div class="cool-show-two" id="cool-show-two" v-show="!isShow2D">
                 <span v-if="notImgtips" class="cool-noImg-text"
-                    :style="'line-height:' + saveProp.height + 'px'">图片加载失败</span>
+                    :style="'line-height:' + saveProp.height + ';'">图片加载失败</span>
             </div>
             <div id="cool-show-three" v-show="isShow2D">
                 <span v-if="imgInfo.lodingThree" class="cool-noImg-text"
-                    :style="'line-height:' + saveProp.height + 'px'">模型加载中...</span>
+                    :style="'line-height:' + saveProp.height + ';'">模型加载中...</span>
             </div>
         </div>
     </div>
@@ -68,11 +68,11 @@ let myComponent = Vue.extend({
   template: temp,
   props: {
     width: {
-      type: Number,
+      type: Number | String,
       default: 600,
     },
     height: {
-      type: Number,
+      type: Number | String,
       default: 350,
     },
     bgColor: {
@@ -87,8 +87,8 @@ let myComponent = Vue.extend({
   data() {
     return {
       saveProp: {
-        width: 600,
-        height: 350,
+        width: "600px",
+        height: "350px",
         bgColor: "bisque",
         coolUrl: "",
       },
@@ -152,16 +152,6 @@ let myComponent = Vue.extend({
     },
   },
   methods: {
-    diffIndex() {
-      if (this.height > 350) this.saveProp.height = this.height;
-      if (this.width > 450) this.saveProp.width = this.width + 150;
-      this.saveProp.bgColor = this.bgColor;
-      this.saveProp.coolUrl = this.coolUrl;
-      if (this.coolUrl === "") {
-        this.notImgtips = true;
-        return true;
-      }
-    },
     getImageSize(url) {
       return new Promise((resolve, reject) => {
         let image = new Image();
@@ -341,8 +331,10 @@ let myComponent = Vue.extend({
       this.upImgPosition();
     },
     diffIndex() {
-      if (this.height > 350) this.saveProp.height = this.height;
-      if (this.width > 450) this.saveProp.width = this.width + 150;
+      if (this.height == "auto") this.saveProp.height = "100%";
+      else if (this.height > 350) this.saveProp.height = this.height + "px";
+      if (this.width == "auto") this.saveProp.width = "100%";
+      else if (this.width > 450) this.saveProp.width = this.width + 150 + "px";
       this.saveProp.bgColor = this.bgColor;
       this.saveProp.coolUrl = this.coolUrl;
       if (this.coolUrl === "") {
