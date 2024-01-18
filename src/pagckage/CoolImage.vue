@@ -103,7 +103,6 @@ interface imgInfoIter {
     imgWidth: number,
     liveDom: any,
     addNum: number,
-    upImgSizeMax: boolean,
     realAngleX: number,
     realAngleY: number
 }
@@ -122,8 +121,7 @@ let imgInfo: imgInfoIter = reactive({
     realAngleY: 0,
     addNum: 1.1,
     imgWidth: 0,
-    imgHeight: 0,
-    upImgSizeMax: true
+    imgHeight: 0
 })
 
 //获取图片数据
@@ -158,14 +156,16 @@ const initImg = (url: string) => {
 //创建图形
 const drawCanvas = (url: string) => {
     if (imgInfo?.liveDom != "") document.getElementsByClassName('show_img')[0]?.remove();
-    let widthPro = 500 / imgInfo.imgWidth;
-    let heightPro = 400 / imgInfo.imgHeight;
+    const maxWidth = canvasBg.offsetWidth - 20;
+    const maxHeight = canvasBg.offsetHeight - 10;
+    let widthPro = maxWidth / imgInfo.imgWidth;
+    let heightPro = maxHeight / imgInfo.imgHeight;
     let width = imgInfo.imgWidth, height = imgInfo.imgHeight;
-    if (width > 500) {
-        width = 500;
+    if (width > maxWidth) {
+        width = maxWidth;
         height *= widthPro;
-    } else if (height > 400) {
-        height = 400;
+    } else if (height > maxHeight) {
+        height = maxHeight;
         width *= heightPro;
     }
     let newImg = document.createElement('img');
@@ -263,29 +263,28 @@ const upImgSize = (cz: string) => {
     let addWidth = oldWidth * imgInfo.addNum;
     let addHeight = oldHeight * imgInfo.addNum;
     if (canvasBg.value == null) return;
-    let maxWidth = canvasBg.value.offsetWidth - 50;
-    let maxHeight = canvasBg.value.offsetHeight - 30;
-    if (addWidth > maxWidth && cz == "add") {
-        if (imgInfo.upImgSizeMax) {
+    let maxWidth = canvasBg.value.offsetWidth - 20;
+    let maxHeight = canvasBg.value.offsetHeight - 10;
+    if (cz == "add") {
+        if (addWidth > maxWidth) {
             imgInfo.liveDom.style.width = maxWidth + "px";
-            imgInfo.liveDom.style.height = addHeight + "px";
-            imgInfo.upImgSizeMax = false;
-        }
-    } else if (addHeight > maxHeight && cz == "add") {
-        if (imgInfo.upImgSizeMax) {
-            imgInfo.liveDom.style.width = addWidth + "px";
+        }else if (addHeight > maxHeight){
             imgInfo.liveDom.style.height = maxHeight + "px";
-            imgInfo.upImgSizeMax = false;
+        }else{
+            imgInfo.liveDom.style.height = addHeight + "px";
+            imgInfo.liveDom.style.width = addWidth + "px";
         }
-    } else if (!imgInfo.upImgSizeMax && cz != "add" || cz != "add") {
-        imgInfo.liveDom.style.width = oldWidth / imgInfo.addNum < 80 ? 80 : oldWidth / imgInfo.addNum + "px";
-        imgInfo.liveDom.style.height = oldHeight / imgInfo.addNum < 80 ? 80 : oldHeight / imgInfo.addNum + "px";
-        imgInfo.upImgSizeMax = true;
-    } else {
-        imgInfo.liveDom.style.width = addWidth + "px";
-        imgInfo.liveDom.style.height = addHeight + "px";
-        imgInfo.upImgSizeMax = true;
+        upImgPosition();
+        return;
     }
+    imgInfo.liveDom.style.width =
+        oldWidth / imgInfo.addNum < 80
+          ? 80
+          : oldWidth / imgInfo.addNum + "px";
+      imgInfo.liveDom.style.height =
+        oldHeight / imgInfo.addNum < 80
+          ? 80
+          : oldHeight / imgInfo.addNum + "px";
     upImgPosition();
 }
 
