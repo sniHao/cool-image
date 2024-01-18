@@ -180,15 +180,18 @@ let myComponent = Vue.extend({
     drawCanvas(url) {
       if (this.imgInfo?.liveDom != "")
         document.getElementsByClassName("show_img")[0]?.remove();
-      let widthPro = 500 / this.imgInfo.imgWidth;
-      let heightPro = 400 / this.imgInfo.imgHeight;
+      const maxWidth = this.canvasBg.offsetWidth - 20;
+      const maxHeight = this.canvasBg.offsetHeight - 10;
+      let widthPro = maxWidth / this.imgInfo.imgWidth;
+      let heightPro = maxHeight / this.imgInfo.imgHeight;
       let width = this.imgInfo.imgWidth,
         height = this.imgInfo.imgHeight;
-      if (width > 500) {
-        width = 500;
+      if (width > maxWidth) {
+        width = maxWidth;
         height *= widthPro;
-      } else if (height > 400) {
-        height = 400;
+      }
+      if (height > maxHeight) {
+        height = maxHeight;
         width *= heightPro;
       }
       let newImg = document.createElement("img");
@@ -286,35 +289,28 @@ let myComponent = Vue.extend({
       let addWidth = oldWidth * this.imgInfo.addNum;
       let addHeight = oldHeight * this.imgInfo.addNum;
       if (this.canvasBg == null) return;
-      let maxWidth = this.canvasBg.offsetWidth - 50;
-      let maxHeight = this.canvasBg.offsetHeight - 30;
-      if (addWidth > maxWidth && cz == "add") {
-        if (this.imgInfo.upImgSizeMax) {
+      let maxWidth = this.canvasBg.offsetWidth - 20;
+      let maxHeight = this.canvasBg.offsetHeight - 10;
+      if (cz == "add") {
+        if (addWidth > maxWidth) {
           this.imgInfo.liveDom.style.width = maxWidth + "px";
-          this.imgInfo.liveDom.style.height = addHeight + "px";
-          this.imgInfo.upImgSizeMax = false;
-        }
-      } else if (addHeight > maxHeight && cz == "add") {
-        if (this.imgInfo.upImgSizeMax) {
-          this.imgInfo.liveDom.style.width = addWidth + "px";
+        } else if (addHeight > maxHeight) {
           this.imgInfo.liveDom.style.height = maxHeight + "px";
-          this.imgInfo.upImgSizeMax = false;
+        } else {
+          this.imgInfo.liveDom.style.width = addWidth + "px";
+          this.imgInfo.liveDom.style.height = addHeight + "px";
         }
-      } else if ((!this.imgInfo.upImgSizeMax && cz != "add") || cz != "add") {
-        this.imgInfo.liveDom.style.width =
-          oldWidth / this.imgInfo.addNum < 80
-            ? 80
-            : oldWidth / this.imgInfo.addNum + "px";
-        this.imgInfo.liveDom.style.height =
-          oldHeight / this.imgInfo.addNum < 80
-            ? 80
-            : oldHeight / this.imgInfo.addNum + "px";
-        this.imgInfo.upImgSizeMax = true;
-      } else {
-        this.imgInfo.liveDom.style.width = addWidth + "px";
-        this.imgInfo.liveDom.style.height = addHeight + "px";
-        this.imgInfo.upImgSizeMax = true;
+        this.upImgPosition();
+        return;
       }
+      this.imgInfo.liveDom.style.width =
+        oldWidth / this.imgInfo.addNum < 80
+          ? 80
+          : oldWidth / this.imgInfo.addNum + "px";
+      this.imgInfo.liveDom.style.height =
+        oldHeight / this.imgInfo.addNum < 80
+          ? 80
+          : oldHeight / this.imgInfo.addNum + "px";
       this.upImgPosition();
     },
     upImgPosition() {
