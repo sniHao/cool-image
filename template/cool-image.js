@@ -106,7 +106,6 @@ let myComponent = Vue.extend({
         addNum: 1.1,
         imgWidth: 0,
         imgHeight: 0,
-        upImgSizeMax: true,
         canShowThree: true,
         hasThree: false,
         lodingThree: true,
