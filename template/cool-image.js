@@ -337,15 +337,27 @@ let myComponent = Vue.extend({
         return true;
       }
     },
+    convertImageToBase64(imageUrl) {
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        const image = new Image();
+        image.crossOrigin = "Anonymous";
+        image.onload = function () {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          context.drawImage(image, 0, 0);
+          resolve([canvas.toDataURL(), image.width, image.height]);
+        };
+        image.src = imageUrl;
+      });
+    },
     renderingCanvas(canvasDom, url, bgColor) {
       return new Promise((resolve) => {
-        url = url + "?" + Date.parse(new Date().toString());
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          const res = countSize(img.width, img.height, true);
-          drawImg(res[0], res[1]);
-        };
+        this.convertImageToBase64(url).then((res) => {
+          const result = countSize(res[1], res[2], true);
+          drawImg(res[0], result[0], result[1]);
+        });
         //重置渲染图片大小
         const countSize = (imgWidth, imgHeight, loop) => {
           const res = [imgWidth, imgHeight];
@@ -386,7 +398,7 @@ let myComponent = Vue.extend({
           }
         };
         //绘制图形
-        const drawImg = (imgWidth, imgHeight) => {
+        const drawImg = (baseUrl, imgWidth, imgHeight) => {
           imgWidth = imgWidth === undefined ? 15 : imgWidth;
           imgHeight = imgHeight === undefined ? 12 : imgHeight;
           const scene = new THREE.Scene();
@@ -403,7 +415,7 @@ let myComponent = Vue.extend({
           const geometry = new THREE.PlaneGeometry(imgWidth, imgHeight);
           const loader = new THREE.TextureLoader();
           const material = new THREE.MeshBasicMaterial({
-            map: loader.load(url, render),
+            map: loader.load(baseUrl, render),
             side: THREE.DoubleSide,
             transparent: true,
           });
