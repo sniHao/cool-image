@@ -3,6 +3,7 @@ import { OrbitControls } from "./three-orbit.js";
 
 let temp = `
 <div class="cool-image-bd"
+        :class="fullScreenInfo.isFull ? 'full' : ''"
         :style="'width:' + saveProp.width + ';height:' + saveProp.height + ';background-color: ' + saveProp.bgColor">
         <div class="cool-operate">
             <div class="flex-center-zy">
@@ -42,10 +43,31 @@ let temp = `
                     </el-button>
                 </template>
             </div>
+            <!-- 全屏预览-->
+            <div style="margin-bottom: 15px" v-if="!isShow2D">
+              <el-button
+                v-if="!fullScreenInfo.isFull"
+                class="cool-btn"
+                type="primary"
+                @click="fullScreen(true)"
+                round
+              >
+                全屏预览
+              </el-button>
+              <el-button
+                v-else
+                class="cool-btn"
+                type="danger"
+                @click="fullScreen(false)"
+                round
+              >
+                退出全屏预览
+              </el-button>
+            </div>
             <!-- 2_3维切换-->
             <div class="flex-center-zy" style="margin-top: 20px;">
                 <span class="ft-b cz-font" :class="!isShow2D ? 'is-avtive' : ''">2D</span>
-                <el-switch v-if="imgInfo.canShowThree" v-model="isShow2D" active-color="#13ce66"
+                <el-switch v-if="imgInfo.canShowThree" v-model="isShow2D" active-color="#13ce66" :disabled="fullScreenInfo.isFull"
                     inactive-color="#409eff"></el-switch>
                 <el-switch v-else active-color="#13ce66" inactive-color="#409eff" disabled></el-switch>
                 <span class="ft-b cz-font" :class="isShow2D ? 'is-avtive' : ''">3D</span>
@@ -116,6 +138,11 @@ let myComponent = Vue.extend({
       moveY: 0,
       domX: 0,
       domY: 0,
+      fullScreenInfo: {
+        isFull: false,
+        temHeight: "",
+        temWidth: "",
+      },
     };
   },
   mounted() {
@@ -151,6 +178,28 @@ let myComponent = Vue.extend({
     },
   },
   methods: {
+    fullScreen(zt) {
+      this.fullScreenInfo.isFull = zt;
+      zt ? this.goFull() : this.outFull();
+    },
+    goFull() {
+      this.fullScreenInfo.temHeight = this.saveProp.height;
+      this.fullScreenInfo.temWidth = this.saveProp.width;
+      this.saveProp.height = window.innerHeight + "px";
+      this.saveProp.width = window.innerWidth + "px";
+      setTimeout(() => {
+        this.upImgSize("add");
+      }, 50);
+      this.$message.success("已进入全屏预览模式");
+    },
+    outFull() {
+      this.saveProp.height = this.fullScreenInfo.temHeight;
+      this.saveProp.width = this.fullScreenInfo.temWidth;
+      setTimeout(() => {
+        this.upImgSize("sub");
+      }, 50);
+      this.$message.success("已退出全屏预览模式");
+    },
     getImageSize(url) {
       return new Promise((resolve, reject) => {
         let image = new Image();
