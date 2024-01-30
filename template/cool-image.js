@@ -196,7 +196,7 @@ let myComponent = Vue.extend({
       this.saveProp.height = this.fullScreenInfo.temHeight;
       this.saveProp.width = this.fullScreenInfo.temWidth;
       setTimeout(() => {
-        this.upImgSize("sub");
+        this.reductionImg();
       }, 50);
       this.$message.success("已退出全屏预览模式");
     },
