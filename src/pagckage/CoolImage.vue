@@ -225,7 +225,7 @@ const outFull = () => {
   saveProp.height = fullScreenInfo.temHeight;
   saveProp.width = fullScreenInfo.temWidth;
   setTimeout(() => {
-    upImgSize("sub");
+    reductionImg();
   }, 50);
   ElMessage.success("已退出全屏预览模式");
 };
