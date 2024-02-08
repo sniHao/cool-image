@@ -64,7 +64,7 @@ let temp = `
         <div class="cool-show-body">
             <div class="cool-show-two" id="cool-show-two" v-show="!isShow2D">
                 <span v-if="notImgtips" class="cool-noImg-text"
-                    :style="'line-height:' + saveProp.height + ';'">图形加载失败</span>
+                    :style="'line-height:' + saveProp.height + ';width:100%'">图形加载失败</span>
             </div>
             <div id="cool-show-three" v-show="isShow2D">
                 <span v-if="imgInfo.lodingThree" class="cool-noImg-text"
@@ -178,7 +178,9 @@ let myComponent = Vue.extend({
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function () {
+          console.log(xhr);
           if (xhr.readyState === 4 && xhr.status === 200) resolve(xhr);
+          else resolve("no_svg");
         };
         xhr.send();
       });
@@ -202,9 +204,9 @@ let myComponent = Vue.extend({
     },
     initImg(url) {
       if (url.substring(url.lastIndexOf(".") + 1) === "svg") {
-        this.getSvg(url).then((res) => {
+        this.getSvg(url).then((res) => {;
+          this.notImgtips = res === "no_svg" ? true : false;
           let svg = res.responseXML.all[0];
-          this.notImgtips = svg == undefined || svg == null;
           this.imgInfo.imgHeight = svg.height.animVal.valueAsString;
           this.imgInfo.imgWidth = svg.width.animVal.valueAsString;
           this.drawCanvas(res.responseText);

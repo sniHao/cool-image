@@ -41,6 +41,7 @@
   height: 100%;
   position: relative;
   transform-origin: center center;
+  display: flex;
 }
 
 #cool-show-three {
