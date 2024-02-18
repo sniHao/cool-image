@@ -178,9 +178,8 @@ let myComponent = Vue.extend({
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function () {
-          console.log(xhr);
-          if (xhr.readyState === 4 && xhr.status === 200) resolve(xhr);
-          else resolve("no_svg");
+          if (xhr.readyState === 4)
+            xhr.status === 200 ? resolve(xhr) : resolve("no_svg");
         };
         xhr.send();
       });
@@ -204,8 +203,9 @@ let myComponent = Vue.extend({
     },
     initImg(url) {
       if (url.substring(url.lastIndexOf(".") + 1) === "svg") {
-        this.getSvg(url).then((res) => {;
+        this.getSvg(url).then((res) => {
           this.notImgtips = res === "no_svg" ? true : false;
+          if (this.notImgtips) return;
           let svg = res.responseXML.all[0];
           this.imgInfo.imgHeight = svg.height.animVal.valueAsString;
           this.imgInfo.imgWidth = svg.width.animVal.valueAsString;
